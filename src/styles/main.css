@@ -1,0 +1,81 @@
+body{
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-secondary);
+  color: var(--color-text-dark);
+}
+
+button{
+  background-color: var(--color-accent);
+  color: var(--color-text-light);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover{
+  background-color: var(--color-primary);
+  color: var(--color-text-dark);
+}
+.boss-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.boss-menu {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.boss-section {
+  margin-top: 20px;
+}
+
+/* Asistencia semanal */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  justify-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.day-box {
+  background-color: #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 50px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.day-box.active {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Menú semanal */
+.menu-week {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.menu-day {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
