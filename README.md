@@ -1,16 +1,53 @@
-# React + Vite
+# Stepover – Sistema de Gestión de Comidas y Turnos Semanales
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Stepover es una aplicación web, cuyo objetivo es gestionar usuarios, asignar días laborales presenciales y registrar pedidos de comida para esos dias. Usando únicamente React + LocalStorage.
+El proyecto incluye un panel para admin, jefes y otro para empleados, permitiendo administrar información de manera clara, organizada y totalmente funcional.
+![landing](image.png)
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Gestion General
 
-## React Compiler
+* Alta de usuarios mediante modal.
+* Creación de roles.
+* Creación de áreas.
+![gestion general](image-1.png)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+### Calendario semanal
+* Visualización interactiva semana laboral (Lunes a Viernes).
+* Selección de días laborales con estados visuales.
+* Modo administrador: edición de datos.
+* Modo empleado: vista de "mi area" sin edición de asignacion semanal, solo eleccion de comida en dias asignados por el jefe.
+* Persistencia de los días asignados mediante LocalStorage.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Gestión de comidas:
+* Asignación de comidas a cada día habilitado.
+* Modal para agregar nuevos tipos de comida.
+* Paginación (hasta 5 elementos por página).
+* Asociación automática entre día habilitado y pedido del usuario.
+
+![panel empleado](image-2.png)
+
+### Modo claro / modo oscuro:
+* Implementación de un toggle animado con íconos de sol y luna.
+* Transición visual suave entre ambos modos.
+
+![panel jefe](image-3.png)
+
+### Estructura organizada en:
+    components/
+    context/
+    pages/
+    styles/
+
+
+### Links importantes
+
+Repositorio GitHub: [(Link)](https://github.com/lukasako/PARCIAL2_STEPOVER)
+
+### Profesor
+ Gaitan Fernando Gonzalo
+
+### Autor
+Lucas Morales – ACN4AV
