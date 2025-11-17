@@ -7,3 +7,43 @@
   --color-highlight: #FFD580;
   --color-unset: #bdbdbd;
 }
+body.dark-mode {
+  --color-primary: #2b2b2b;
+  --color-secondary: #1e1e1e;
+  --color-accent: #5C9E7D;
+  --color-text-dark: #f1f1f1;
+  --color-text-light: #ffffff;
+  --color-highlight: #8c6d31;
+  --color-unset: #555;
+}
+
+body.dark-mode {
+  background-color: var(--color-secondary);
+  color: var(--color-text-dark);
+}
+
+body.dark-mode section {
+  background-color: #262626 !important;
+  border-color: #333 !important;
+}
+
+body.dark-mode table th {
+  background-color: #333 !important;
+  color: var(--color-text-light) !important;
+}
+
+body.dark-mode tr:hover {
+  background-color: rgba(255,255,255,0.05);
+}
+
+body.dark-mode .stat-card {
+  background: #2f2f2f !important;
+}
+
+body.dark-mode .modal {
+  background: #2d2d2d !important;
+}
+
+body.dark-mode .food-item {
+  background: #333 !important;
+}

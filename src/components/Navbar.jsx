@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
-import "./Navbar.css";
+import "../styles/navbar.css";
 
-export default function Navbar() {
+export default function Navbar({ darkMode, setDarkMode }){
   const { user, logout } = useAuth();
 
   if (!user) return null;
@@ -10,7 +10,12 @@ export default function Navbar() {
     <nav className="navbar">
       <img src="../public/stepover.png" alt="StepOver Isotipo" name="StepOver"/>
       <div className="nav-user">
-        <span>{user.name} ({user.role})</span>
+      <div className={`theme-toggle ${darkMode ? "dark" : ""}`} onClick={() => setDarkMode(!darkMode)}>
+        <span className="toggle-icon">
+          {darkMode ? "🌙" : "☀️"}
+        </span>
+      </div>
+        <span>{user.name}</span>
         <button onClick={logout}>Cerrar sesión</button>
       </div>
     </nav>
