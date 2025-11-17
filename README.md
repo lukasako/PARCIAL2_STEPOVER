@@ -2,7 +2,7 @@
 
 Stepover es una aplicación web, cuyo objetivo es gestionar usuarios, asignar días laborales presenciales y registrar pedidos de comida para esos dias. Usando únicamente React + LocalStorage.
 El proyecto incluye un panel para admin, jefes y otro para empleados, permitiendo administrar información de manera clara, organizada y totalmente funcional.
-![landing](image.png)
+![landing](./src/assets/image.png)
 
 ## Funcionalidades
 
@@ -11,7 +11,7 @@ El proyecto incluye un panel para admin, jefes y otro para empleados, permitiend
 * Alta de usuarios mediante modal.
 * Creación de roles.
 * Creación de áreas.
-![gestion general](image-1.png)
+![gestion general](./src/assets/image-1.png)
 
 
 ### Calendario semanal
@@ -27,13 +27,13 @@ El proyecto incluye un panel para admin, jefes y otro para empleados, permitiend
 * Paginación (hasta 5 elementos por página).
 * Asociación automática entre día habilitado y pedido del usuario.
 
-![panel empleado](image-2.png)
+![panel empleado](./src/assets/image-2.png)
 
 ### Modo claro / modo oscuro:
 * Implementación de un toggle animado con íconos de sol y luna.
 * Transición visual suave entre ambos modos.
 
-![panel jefe](image-3.png)
+![panel jefe](./src/assets/image-3.png)
 
 ### Estructura organizada en:
     components/
