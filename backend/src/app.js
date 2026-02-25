@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 const PORT = 5000;
@@ -14,3 +16,6 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
