@@ -3,6 +3,7 @@ import { verifyToken, verifyAdmin } from "../middleware/authMiddleware.js";
 import {
   getAllUsers,
   getUserById,
+  getTeamUsers,
   createUser,
   updateUser,
   deleteUser
@@ -16,5 +17,6 @@ router.get("/:id", getUserById);
 router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
+router.get("/team", verifyToken, getTeamUsers);
 
 export default router;

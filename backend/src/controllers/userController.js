@@ -106,3 +106,21 @@ export const deleteUser = (req, res) => {
 
   res.json({ message: "Usuario eliminado" });
 };
+
+export const getTeamUsers = (req, res) => {
+  const requester = req.user;
+  const users = getUsers();
+
+  if (requester.role === "admin") {
+    return res.json(users);
+  }
+
+  if (requester.role === "boss") {
+    const team = users.filter(
+      (u) => u.area === requester.area && u.role === "employee"
+    );
+    return res.json(team);
+  }
+
+  return res.status(403).json({ message: "No autorizado" });
+};
