@@ -9,6 +9,8 @@ import foodRoutes from "./routes/foodRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import teamAttendanceRoutes from "./routes/teamAttendanceRoutes.js";
+import roleRoutes from "./routes/roleRoutes.js";
+import areaRoutes from "./routes/areaRoutes.js";
 
 const app = express();
 const PORT = 5003;
@@ -30,6 +32,8 @@ app.use("/api/foods", foodRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/team-attendance", teamAttendanceRoutes);
+app.use("/api/roles", roleRoutes);
+app.use("/api/areas", areaRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
