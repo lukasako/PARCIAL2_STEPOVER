@@ -1,9 +1,11 @@
 import express from "express";
 import cors from "cors";
 import { initializeUsers } from "./models/users.js";
+import { initializeFoods } from "./models/foods.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import foodRoutes from "./routes/foodRoutes.js";
 
 const app = express();
 const PORT = 5003;
@@ -11,8 +13,9 @@ const PORT = 5003;
 app.use(cors());
 app.use(express.json());
 
-//inicia el seeder de usuarios
+//acciones antes de levantar el serv
 await initializeUsers();
+initializeFoods();
 
 app.get("/", (req, res) => {
   res.json({ message: "API StepOver funcionando" });
@@ -20,6 +23,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/foods", foodRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
