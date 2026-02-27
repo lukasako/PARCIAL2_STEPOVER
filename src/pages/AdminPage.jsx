@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import "../styles/panel.css";
-import { users as initialUsers } from "../data/users";
-import { foods as initialFoods } from "../data/foods";
+import { getUsers, createUser, updateUser, deleteUser } from "../services/userService";
+import { getRoles, createRole } from "../services/roleService";
+import { getAreas, createArea } from "../services/areaService";
+import { getFoods, createFood, updateFood, deleteFood } from "../services/foodService";
+import { useEffect } from "react";
 
 export default function AdminPage() {
-  const [users, setUsers] = useState(initialUsers);
-  const [foods, setFoods] = useState(initialFoods);
-  const [roles, setRoles] = useState(["Administrador", "Jefe", "Empleado"]);
-  const [areas, setAreas] = useState(["Recursos Humanos", "General", "Desarrolladores", "Soporte"]);
+  const [users, setUsers] = useState([]);
+  const [foods, setFoods] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [areas, setAreas] = useState([]);
 
   const [newFood, setNewFood] = useState("");
   const [pageUsers, setPageUsers] = useState(1);
@@ -27,6 +30,49 @@ export default function AdminPage() {
   const totalPagesFoods = Math.ceil(foods.length / itemsPerPage);
   const visibleFoods = foods.slice((pageFoods - 1) * itemsPerPage, pageFoods * itemsPerPage);
 
+  useEffect(() => {
+    loadUsers();
+    loadRoles();
+    loadAreas();
+    loadFoods();
+  }, []);
+
+  const loadRoles = async () => {
+    try {
+      const data = await getRoles();
+      setRoles(data);
+    } catch (error) {
+      console.error("Error cargando roles", error);
+    }
+  };
+
+  const loadFoods = async () => {
+    try {
+      const data = await getFoods();
+      setFoods(data);
+    } catch (error) {
+      console.error("Error cargando comidas", error);
+    }
+  };
+
+  const loadAreas = async () => {
+    try {
+      const data = await getAreas();
+      setAreas(data);
+    } catch (error) {
+      console.error("Error cargando áreas", error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const data = await getUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error cargando usuarios", error);
+    }
+  };
+
   const handleAddFood = (e) => {
     if (e.key === "Enter" && newFood.trim()) {
       setFoods([...foods, newFood.trim()]);
@@ -40,14 +86,24 @@ export default function AdminPage() {
     setShowEditModal(true);
   };
 
-  const handleSaveEdit = () => {
-    setUsers(users.map((u) => (u.id === selectedUser.id ? { ...formData } : u)));
-    setShowEditModal(false);
+  const handleSaveEdit = async () => {
+    try {
+      await updateUser(selectedUser.id, formData);
+      setShowEditModal(false);
+      loadUsers();
+    } catch (error) {
+      console.error("Error actualizando usuario", error);
+    }
   };
 
-  const handleDeleteUser = () => {
-    setUsers(users.filter((u) => u.id !== selectedUser.id));
-    setShowEditModal(false);
+  const handleDeleteUser = async () => {
+    try {
+      await deleteUser(selectedUser.id);
+      setShowEditModal(false);
+      loadUsers();
+    } catch (error) {
+      console.error("Error borrando usuario", error);
+    }
   };
 
   const handleOpenCreateModal = () => {
@@ -55,27 +111,67 @@ export default function AdminPage() {
     setShowCreateModal(true);
   };
 
-  const handleSaveNewUser = () => {
-    if (formData.id && formData.username && formData.name && formData.password && formData.area && formData.role) {
-      setUsers([...users, formData]);
+  const handleSaveNewUser = async () => {
+    try {
+      await createUser(formData);
       setShowCreateModal(false);
+      loadUsers();
+    } catch (error) {
+      console.error("Error creando usuario", error);
     }
   };
 
-  const handleSaveNewRole = () => {
-    if (newRole.trim() && !roles.includes(newRole.trim())) {
-      setRoles([...roles, newRole.trim()]);
+  const handleSaveNewRole = async () => {
+    try {
+      await createRole(newRole);
+      setShowRoleModal(false);
+      setNewRole("");
+      loadRoles();
+    } catch (error) {
+      console.error("Error creando rol", error);
     }
-    setNewRole("");
-    setShowRoleModal(false);
   };
 
-  const handleSaveNewArea = () => {
-    if (newArea.trim() && !areas.includes(newArea.trim())) {
-      setAreas([...areas, newArea.trim()]);
+  const handleSaveNewArea = async () => {
+    try {
+      await createArea(newArea);
+      setShowAreaModal(false);
+      setNewArea("");
+      loadAreas();
+    } catch (error) {
+      console.error("Error creando área", error);
     }
-    setNewArea("");
-    setShowAreaModal(false);
+  };
+
+  const handleSaveNewFood = async () => {
+    try {
+      await createFood(newFood);
+      setShowFoodModal(false);
+      setNewFood({ name: "", description: "", price: "" });
+      loadFoods();
+    } catch (error) {
+      console.error("Error creando comida", error);
+    }
+  };
+
+  const handleSaveEditFood = async () => {
+    try {
+      await updateFood(selectedFood.id, foodFormData);
+      setShowEditFoodModal(false);
+      loadFoods();
+    } catch (error) {
+      console.error("Error actualizando comida", error);
+    }
+  };
+
+  const handleDeleteFood = async () => {
+    try {
+      await deleteFood(selectedFood.id);
+      setShowEditFoodModal(false);
+      loadFoods();
+    } catch (error) {
+      console.error("Error eliminando comida", error);
+    }
   };
 
   const stats = {
@@ -136,19 +232,17 @@ export default function AdminPage() {
         <div className="food-list">
           {visibleFoods.map((food, index) => (
             <div key={index} className="food-item">
-              <span>{food}</span>
-              <div className="food-actions">
-                <button className="btn-outline">Editar</button>
-                <button className="btn-danger">Borrar</button>
-              </div>
+              <span>{food}</span>  
             </div>
           ))}
         </div>
+
         <div className="pagination">
           <button disabled={pageFoods === 1} onClick={() => setPageFoods(pageFoods - 1)} className="btn-outline">Anterior</button>
           <span>Página {pageFoods} de {totalPagesFoods}</span>
           <button disabled={pageFoods === totalPagesFoods} onClick={() => setPageFoods(pageFoods + 1)} className="btn-outline">Siguiente</button>
         </div>
+
         <input
           type="text"
           value={newFood}
@@ -209,7 +303,6 @@ export default function AdminPage() {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Crear Nuevo Usuario</h3>
-            <input type="number" placeholder="ID" value={formData.id} onChange={(e) => setFormData({ ...formData, id: parseInt(e.target.value) })} />
             <input type="text" placeholder="Username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
             <input type="text" placeholder="Nombre" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
             <input type="password" placeholder="Contraseña" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />

@@ -1,12 +1,58 @@
-import { useAttendance } from "../context/AttendanceContext";
+import { useEffect, useState } from "react";
 import WeeklyCalendar from "./WeeklyCalendar";
-import { users } from "../data/users";
+import { getUsers } from "../services/userService";
+import {
+  getAttendanceByUser,
+  updateAttendance,
+} from "../services/attendanceService";
 
 export default function TeamAttendance({ boss }) {
-  const { attendanceData, updateAttendance } = useAttendance();
-  const team = users.filter(
-    (u) => u.area === boss.area && u.role === "employee"
-  );
+  const [team, setTeam] = useState([]);
+  const [attendanceMap, setAttendanceMap] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadTeam();
+  }, []);
+
+  const loadTeam = async () => {
+    try {
+      const users = await getUsers();
+
+      const filtered = users.filter(
+        (u) => u.area === boss.area && u.role === "employee"
+      );
+
+      setTeam(filtered);
+
+      const attendanceData = {};
+
+      for (const emp of filtered) {
+        const data = await getAttendanceByUser(emp.id);
+        attendanceData[emp.id] = data.days || [];
+      }
+
+      setAttendanceMap(attendanceData);
+    } catch (error) {
+      console.error("Error cargando equipo", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (userId, days) => {
+    try {
+      await updateAttendance(userId, days);
+      setAttendanceMap((prev) => ({
+        ...prev,
+        [userId]: days,
+      }));
+    } catch (error) {
+      console.error("Error actualizando asistencia", error);
+    }
+  };
+
+  if (loading) return <p>Cargando equipo...</p>;
 
   return (
     <div>
@@ -24,8 +70,8 @@ export default function TeamAttendance({ boss }) {
               <td>{emp.name}</td>
               <td>
                 <WeeklyCalendar
-                  initialDays={attendanceData[emp.id]?.days || []}
-                  onChange={(days) => updateAttendance(emp.id, days)}
+                  initialDays={attendanceMap[emp.id] || []}
+                  onChange={(days) => handleUpdate(emp.id, days)}
                 />
               </td>
             </tr>

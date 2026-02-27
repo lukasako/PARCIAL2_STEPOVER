@@ -3,21 +3,23 @@ import { useState, useEffect } from "react";
 export default function WeeklyCalendar({
   initialDays = [],
   onChange,
-  userRole,
+  readOnly = false,
 }) {
   const [selectedDays, setSelectedDays] = useState(initialDays);
-  const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-  const isReadOnly = userRole === "employee";
+
+  const daysOfWeek = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
 
   useEffect(() => {
     setSelectedDays(initialDays);
   }, [initialDays]);
 
   const toggleDay = (day) => {
-    if (isReadOnly) return;
+    if (readOnly) return;
+
     const updatedDays = selectedDays.includes(day)
       ? selectedDays.filter((d) => d !== day)
       : [...selectedDays, day];
+
     setSelectedDays(updatedDays);
     onChange?.(updatedDays);
   };
@@ -28,10 +30,10 @@ export default function WeeklyCalendar({
         <button
           key={day}
           className={`day ${selectedDays.includes(day) ? "active" : ""} ${
-            isReadOnly ? "readonly" : ""
+            readOnly ? "readonly" : ""
           }`}
           onClick={() => toggleDay(day)}
-          disabled={isReadOnly}
+          disabled={readOnly}
         >
           {day}
         </button>

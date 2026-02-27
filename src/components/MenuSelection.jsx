@@ -1,44 +1,49 @@
-import { useAttendance } from "../context/AttendanceContext";
 import { useEffect, useState } from "react";
+import { getFoods } from "../services/foodService";
+import { getMenuByUser, updateMenu } from "../services/menuService";
 
-export default function MenuSelection({ user }) {
-  const { attendanceData, updateMenu } = useAttendance();
-  const userId = user.id;
-
-  const userDays = attendanceData[userId]?.days || [];
-
-  const [menus, setMenus] = useState(attendanceData[userId]?.menus || {});
-
-  const mealOptions = [
-    "No pedir comida",
-    "Sanguche de milanesa con bebida",
-    "Milanesa de pollo con ensalada",
-    "Ensalada Caesar con pollo a la plancha",
-    "Wok de vegetales con tofu (vegano)",
-    "Hamburguesa de lentejas (vegano)",
-    "Fideos de arroz con verduras (celíaco)",
-    "Tarta de espinaca y calabaza (celíaco)",
-  ];
-
-  const handleChange = (day, meal) => {
-    const updatedMenus = { ...menus, [day]: meal };
-    setMenus(updatedMenus);
-    updateMenu(userId, updatedMenus);
-  };
+export default function MenuSelection({ user, attendanceDays }) {
+  const [mealOptions, setMealOptions] = useState([]);
+  const [menus, setMenus] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (attendanceData[userId]?.menus) {
-      setMenus(attendanceData[userId].menus);
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const foodsData = await getFoods();
+      const menuData = await getMenuByUser(user.id);
+
+      setMealOptions(foodsData);
+      setMenus(menuData.selections || {});
+    } catch (error) {
+      console.error("Error cargando menú", error);
+    } finally {
+      setLoading(false);
     }
-  }, [attendanceData, userId]);
+  };
+
+  const handleChange = async (day, meal) => {
+    try {
+      const updatedMenus = { ...menus, [day]: meal };
+      setMenus(updatedMenus);
+      await updateMenu(user.id, updatedMenus);
+    } catch (error) {
+      console.error("Error actualizando menú", error);
+    }
+  };
+
+  if (loading) return <p>Cargando menú...</p>;
 
   return (
     <div>
       <h2>Mi menú semanal</h2>
 
-      {userDays.length === 0 ? (
+      {attendanceDays.length === 0 ? (
         <p style={{ color: "#666" }}>
-          No tenés días de asistencia asignados. Seleccionalos en el calendario.
+          No tenés días de asistencia asignados.
         </p>
       ) : (
         <table>
@@ -49,12 +54,12 @@ export default function MenuSelection({ user }) {
             </tr>
           </thead>
           <tbody>
-            {userDays.map((day) => (
+            {attendanceDays.map((day) => (
               <tr key={day}>
                 <td>{day}</td>
                 <td>
                   <select
-                    value={menus[day] || "No pedir comida"}
+                    value={menus[day] || ""}
                     onChange={(e) => handleChange(day, e.target.value)}
                   >
                     {mealOptions.map((option) => (

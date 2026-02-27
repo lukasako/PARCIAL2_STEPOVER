@@ -1,15 +1,45 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import WeeklyCalendar from "../components/WeeklyCalendar";
 import TeamAttendance from "../components/TeamAttendance";
 import MenuSelection from "../components/MenuSelection";
-import { useAuth } from "../context/AuthContext";
-import { useAttendance } from "../context/AttendanceContext";
+import {
+  getMyAttendance,
+  updateAttendance,
+} from "../services/attendanceService";
 import "../styles/panel.css";
 
 export default function BossPage() {
   const { user } = useAuth();
-  const { attendanceData, updateAttendance } = useAttendance();
 
-  const myDays = attendanceData[user.id]?.days || [];
+  const [myDays, setMyDays] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadMyAttendance();
+  }, []);
+
+  const loadMyAttendance = async () => {
+    try {
+      const data = await getMyAttendance();
+      setMyDays(data.days || []);
+    } catch (error) {
+      console.error("Error cargando asistencia", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (days) => {
+    try {
+      await updateAttendance(user.id, days);
+      setMyDays(days);
+    } catch (error) {
+      console.error("Error actualizando asistencia", error);
+    }
+  };
+
+  if (loading) return <p>Cargando panel...</p>;
 
   return (
     <div className="page-container">
@@ -19,12 +49,15 @@ export default function BossPage() {
         <h2>Mi asistencia semanal</h2>
         <WeeklyCalendar
           initialDays={myDays}
-          onChange={(days) => updateAttendance(user.id, days)}
+          onChange={handleUpdate}
         />
       </section>
 
       <section>
-        <MenuSelection user={user} />
+        <MenuSelection
+          user={user}
+          attendanceDays={myDays}
+        />
       </section>
 
       <section>
