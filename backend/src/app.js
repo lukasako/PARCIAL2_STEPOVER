@@ -6,6 +6,7 @@ import { initializeFoods } from "./models/foods.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import foodRoutes from "./routes/foodRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
 
 const app = express();
 const PORT = 5003;
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/foods", foodRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
