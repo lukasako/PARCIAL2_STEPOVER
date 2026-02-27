@@ -4,24 +4,30 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/login.css";
 import loginImage from "../assets/login-image.jpg";
 
-export default function Login() {
+function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = login(username, password);
-    if (success) {
-      const role = JSON.parse(localStorage.getItem("user")).role;
-      if (role === "admin") navigate("/admin");
-      if (role === "boss") navigate("/boss");
-      if (role === "employee") navigate("/employee");
-    } else {
-      setError("Usuario o contraseña incorrectos");
+    setError("");
+
+    const result = await login(username, password);
+
+    if (!result.success) {
+      setError(result.message || "Usuario o contraseña incorrectos");
+      return;
     }
+
+    const role = result.user.role;
+
+    if (role === "admin") navigate("/admin");
+    else if (role === "boss") navigate("/boss");
+    else if (role === "employee") navigate("/employee");
   };
 
   return (
@@ -41,18 +47,21 @@ export default function Login() {
             <label>Usuario</label>
             <input
               type="text"
-              placeholder="Ingresa tu usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
+
             <label>Contraseña</label>
             <input
               type="password"
-              placeholder="Ingresa tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
+
             <button type="submit">Ingresar</button>
+
             {error && <p className="error">{error}</p>}
           </form>
         </div>
@@ -60,3 +69,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login;

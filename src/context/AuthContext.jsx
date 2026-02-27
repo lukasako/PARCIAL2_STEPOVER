@@ -1,30 +1,66 @@
-//contexto de autenticacion de usarios
-import { createContext, useContext, useState } from "react";
-import { users } from "../data/users";
+import { createContext, useState, useEffect, useContext } from "react";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
+
+const decodeToken = (token) => {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState(null);
 
-  const login = (username, password) => {
-    const found = users.find(
-      (u) => u.username === username && u.password === password
-    );
-    if (found) {
-      setUser(found);
-      localStorage.setItem("user", JSON.stringify(found));
-      return true;
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    const decoded = decodeToken(token);
+
+    if (decoded) {
+      setUser(decoded);
+    } else {
+      localStorage.removeItem("token");
     }
-    return false;
+  }, []);
+
+  const login = async (username, password) => {
+    try {
+      const response = await fetch("http://localhost:5003/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.token) {
+        throw new Error("Credenciales inválidas");
+      }
+
+      localStorage.setItem("token", data.token);
+
+      const decoded = decodeToken(data.token);
+
+      setUser(decoded);
+
+      return { success: true, user: decoded };
+
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
   };
 
   const logout = () => {
+    localStorage.removeItem("token");
     setUser(null);
-    localStorage.removeItem("user");
   };
 
   return (
@@ -34,4 +70,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
