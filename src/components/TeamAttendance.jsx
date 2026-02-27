@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import WeeklyCalendar from "./WeeklyCalendar";
-import { getUsers } from "../services/userService";
+import { getTeamUsers } from "../services/userService";
 import {
   getAttendanceByUser,
   updateAttendance,
@@ -17,17 +17,12 @@ export default function TeamAttendance({ boss }) {
 
   const loadTeam = async () => {
     try {
-      const users = await getUsers();
-
-      const filtered = users.filter(
-        (u) => u.area === boss.area && u.role === "employee"
-      );
-
-      setTeam(filtered);
+      const teamUsers = await getTeamUsers();
+      setTeam(teamUsers);
 
       const attendanceData = {};
 
-      for (const emp of filtered) {
+      for (const emp of teamUsers) {
         const data = await getAttendanceByUser(emp.id);
         attendanceData[emp.id] = data.days || [];
       }
