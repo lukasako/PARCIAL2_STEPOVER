@@ -1,5 +1,8 @@
-export const users = [
-  //los admins
+import bcrypt from "bcryptjs";
+
+let users = [];
+
+const initialUsers = [
   {
     id: 1,
     username: "admin",
@@ -8,7 +11,6 @@ export const users = [
     role: "admin",
     area: "General",
   },
-  //jefes
   {
     id: 2,
     username: "boss",
@@ -25,7 +27,6 @@ export const users = [
     role: "boss",
     area: "Soporte",
   },
-  //empleados
   {
     id: 4,
     username: "emp",
@@ -59,3 +60,20 @@ export const users = [
     area: "Soporte",
   },
 ];
+
+//ejecutar este seedeer cuando subo el serv
+export const initializeUsers = async () => {
+  users = await Promise.all(
+    initialUsers.map(async (user) => {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      return {
+        ...user,
+        password: hashedPassword,
+      };
+    })
+  );
+
+  console.log("Usuarios iniciados correctamente");
+};
+
+export const getUsers = () => users;

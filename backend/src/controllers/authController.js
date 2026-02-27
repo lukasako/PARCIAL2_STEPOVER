@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { users } from "../models/users.js";
+import { getUsers } from "../models/users.js";
 
 const SECRET_KEY = "stepover_secret"; //ejemplo xq deberia ser mas segura
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
 
+  const users = getUsers();
   const user = users.find(u => u.username === username);
   if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
@@ -20,4 +21,6 @@ export const login = async (req, res) => {
   );
 
   res.json({ token });
+
+
 };
